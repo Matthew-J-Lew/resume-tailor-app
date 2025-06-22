@@ -1,0 +1,48 @@
+generator client {
+    provider = "prisma-client-js"
+}
+datasource db {
+    provider = "sqlite"
+    url      = env("DATABASE_URL")
+}
+
+model Education {
+    id              Int      @id @default(autoincrement())
+    degree          String
+    schoolName      String
+    gpa             Float
+    startDate       String
+    endDate         String
+    awards          Json?
+    relevantCourses Json?
+
+    @@unique([schoolName, degree])
+}
+
+model Skill {
+    id     Int    @id @default(autoincrement())
+    name   String @unique
+    type   String? 
+}
+
+
+model Experience {
+    id                 Int       @id @default(autoincrement())
+    jobTitle           String
+    companyName        String
+    startDate          String
+    endDate            String
+    location           String?
+    isProject          Boolean   //@default(false)
+    bullets            Json
+    technologies       Json?  // Only applies when isProject = true
+
+    @@unique([jobTitle, companyName, startDate])
+}
+
+model Project {
+    id              Int     @id @default(autoincrement())
+    projectName     String  @unique
+    bullets         Json
+    technologies    Json
+}

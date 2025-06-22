@@ -1,0 +1,26 @@
+# Node modules
+node_modules/
+
+# Environment variables (your API keys)
+.env
+.env.local
+
+# Next.js build output
+.next/
+out/
+
+# Prisma generated files and db if you want to exclude db file
+/prisma/dev.db
+/prisma/dev.db-journal
+
+# Logs
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+
+# Lock files if you want (optional)
+package-lock.json
+yarn.lock
+
+# VSCode settings (optional)
+.vscode/

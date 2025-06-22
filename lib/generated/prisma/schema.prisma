@@ -1,0 +1,96 @@
+generator client {
+  provider = "prisma-client-js"
+  output   = "../lib/generated/prisma"
+}
+
+datasource db {
+  provider = "sqlite"
+  url      = env("DATABASE_URL")
+}
+
+model Education {
+  id              Int              @id @default(autoincrement())
+  degree          String
+  schoolName      String
+  gpa             Float
+  startDate       String
+  endDate         String
+  awards          Award[]
+  relevantCourses RelevantCourse[]
+}
+
+model Award {
+  id          Int       @id @default(autoincrement())
+  text        String
+  education   Education @relation(fields: [educationId], references: [id])
+  educationId Int
+}
+
+model RelevantCourse {
+  id          Int       @id @default(autoincrement())
+  name        String
+  education   Education @relation(fields: [educationId], references: [id])
+  educationId Int
+}
+
+model Experience {
+  id        Int                 @id @default(autoincrement())
+  title     String
+  company   String
+  location  String
+  startDate String
+  endDate   String
+  projects  ExperienceProject[]
+}
+
+model ExperienceProject {
+  id           Int                       @id @default(autoincrement())
+  name         String
+  experience   Experience                @relation(fields: [experienceId], references: [id])
+  experienceId Int
+  technologies ProjectTechnology[]
+  bullets      ExperienceProjectBullet[]
+}
+
+model ProjectTechnology {
+  id                  Int               @id @default(autoincrement())
+  name                String
+  experienceProject   ExperienceProject @relation(fields: [experienceProjectId], references: [id])
+  experienceProjectId Int
+}
+
+model ExperienceProjectBullet {
+  id                  Int               @id @default(autoincrement())
+  text                String
+  experienceProject   ExperienceProject @relation(fields: [experienceProjectId], references: [id])
+  experienceProjectId Int
+}
+
+model Project {
+  id           Int             @id @default(autoincrement())
+  name         String
+  date         String
+  githubLink   String?
+  technologies ProjectTech[]
+  bullets      ProjectBullet[]
+}
+
+model ProjectTech {
+  id        Int     @id @default(autoincrement())
+  name      String
+  project   Project @relation(fields: [projectId], references: [id])
+  projectId Int
+}
+
+model ProjectBullet {
+  id        Int     @id @default(autoincrement())
+  text      String
+  project   Project @relation(fields: [projectId], references: [id])
+  projectId Int
+}
+
+model Skill {
+  id       Int    @id @default(autoincrement())
+  name     String
+  category String
+}
