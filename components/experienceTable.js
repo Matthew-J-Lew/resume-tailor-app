@@ -3,8 +3,13 @@
 import { useEffect, useState, useRef } from 'react'
 
 export default function ExperienceTable() {
+  // State to store all experience entries fetched from the backend
   const [entries, setEntries] = useState([])
+
+  // Loading state while fetching data
   const [loading, setLoading] = useState(true)
+
+  // State for the form inputs for adding/editing an experience entry
   const [newEntry, setNewEntry] = useState({
     jobTitle: '',
     companyName: '',
@@ -15,15 +20,20 @@ export default function ExperienceTable() {
     bullets: '',
     technologies: '',
   })
+
+  // Stores the id of the entry currently being edited (null if adding new)
   const [editId, setEditId] = useState(null)
 
+  // Refs to textareas for auto-resizing based on content length
   const bulletsRef = useRef(null)
   const techRef = useRef(null)
 
+  // Fetch experience entries once on component mount
   useEffect(() => {
     fetchEntries()
   }, [])
 
+  // Auto-resize the bullets textarea when its content changes
   useEffect(() => {
     if (bulletsRef.current) {
       bulletsRef.current.style.height = 'auto'
@@ -31,6 +41,7 @@ export default function ExperienceTable() {
     }
   }, [newEntry.bullets])
 
+  // Auto-resize the technologies textarea when its content changes
   useEffect(() => {
     if (techRef.current) {
       techRef.current.style.height = 'auto'
@@ -38,6 +49,7 @@ export default function ExperienceTable() {
     }
   }, [newEntry.technologies])
 
+  // Fetch entries from backend API endpoint '/api/get-resume'
   const fetchEntries = async () => {
     try {
       const res = await fetch('/api/get-resume')
@@ -50,6 +62,7 @@ export default function ExperienceTable() {
     }
   }
 
+  // Delete an experience entry by id, then refetch entries
   const handleDelete = async (id) => {
     await fetch('/api/experience', {
       method: 'DELETE',
@@ -59,6 +72,7 @@ export default function ExperienceTable() {
     fetchEntries()
   }
 
+  // Populate the form with entry data for editing
   const handleEdit = (entry) => {
     setEditId(entry.id)
     setNewEntry({
@@ -73,6 +87,7 @@ export default function ExperienceTable() {
     })
   }
 
+  // Save edited entry via PUT request, then reset form and refresh list
   const handleSaveEdit = async () => {
     const formatted = {
       ...newEntry,
@@ -95,6 +110,7 @@ export default function ExperienceTable() {
     fetchEntries()
   }
 
+  // Add new entry via POST request, then reset form and refresh list
   const handleAdd = async () => {
     const formatted = {
       ...newEntry,
@@ -115,6 +131,7 @@ export default function ExperienceTable() {
     fetchEntries()
   }
 
+  // Clear the form inputs to default empty values
   const resetForm = () => {
     setNewEntry({
       jobTitle: '',
@@ -130,8 +147,10 @@ export default function ExperienceTable() {
 
   return (
     <div className="p-6 bg-gray-800 text-white rounded-lg shadow-md mb-8">
+      {/* Section title */}
       <h2 className="text-xl font-semibold text-blue-300 mb-4">Experience</h2>
 
+      {/* Show loading, empty state, or experience entries table */}
       {loading ? (
         <p>Loading...</p>
       ) : entries.length === 0 ? (
@@ -149,6 +168,7 @@ export default function ExperienceTable() {
               </tr>
             </thead>
             <tbody>
+              {/* Render each experience entry in a table row */}
               {entries.map((entry) => (
                 <tr key={entry.id} className="hover:bg-gray-700">
                   <td className="px-4 py-2 border-b border-gray-700">{entry.jobTitle}</td>
@@ -156,6 +176,7 @@ export default function ExperienceTable() {
                   <td className="px-4 py-2 border-b border-gray-700">{entry.startDate}</td>
                   <td className="px-4 py-2 border-b border-gray-700">{entry.endDate}</td>
                   <td className="px-4 py-2 border-b border-gray-700 space-x-2">
+                    {/* Edit and Delete buttons */}
                     <button onClick={() => handleEdit(entry)} className="px-2 py-1 bg-yellow-600 text-white rounded text-xs">Edit</button>
                     <button onClick={() => handleDelete(entry.id)} className="px-2 py-1 bg-red-600 text-white rounded text-xs">Delete</button>
                   </td>
@@ -166,9 +187,12 @@ export default function ExperienceTable() {
         </div>
       )}
 
+      {/* Form for adding or editing an experience entry */}
       <div className="border-t border-gray-600 pt-4">
         <h3 className="text-lg mb-2">{editId ? 'Edit Entry' : 'Add Entry'}</h3>
+
         <div className="grid grid-cols-2 gap-4">
+          {/* Job Title input */}
           <input
             type="text"
             value={newEntry.jobTitle}
@@ -176,6 +200,7 @@ export default function ExperienceTable() {
             placeholder="Job Title"
             className="p-2 rounded bg-gray-700 text-white border border-gray-500"
           />
+          {/* Company Name input */}
           <input
             type="text"
             value={newEntry.companyName}
@@ -183,6 +208,7 @@ export default function ExperienceTable() {
             placeholder="Company"
             className="p-2 rounded bg-gray-700 text-white border border-gray-500"
           />
+          {/* Start Date input */}
           <input
             type="text"
             value={newEntry.startDate}
@@ -190,6 +216,7 @@ export default function ExperienceTable() {
             placeholder="Start Date"
             className="p-2 rounded bg-gray-700 text-white border border-gray-500"
           />
+          {/* End Date input */}
           <input
             type="text"
             value={newEntry.endDate}
@@ -197,6 +224,7 @@ export default function ExperienceTable() {
             placeholder="End Date"
             className="p-2 rounded bg-gray-700 text-white border border-gray-500"
           />
+          {/* Location input */}
           <input
             type="text"
             value={newEntry.location}
@@ -204,6 +232,7 @@ export default function ExperienceTable() {
             placeholder="Location"
             className="p-2 rounded bg-gray-700 text-white border border-gray-500"
           />
+          {/* Checkbox to mark this entry as a project */}
           <label className="flex items-center text-sm col-span-2">
             <input
               type="checkbox"
@@ -213,6 +242,7 @@ export default function ExperienceTable() {
             />
             Is Project?
           </label>
+          {/* Textarea for job description bullet points */}
           <textarea
             ref={bulletsRef}
             value={newEntry.bullets}
@@ -220,6 +250,7 @@ export default function ExperienceTable() {
             placeholder="Job Description (One entry per line)"
             className="col-span-2 p-2 rounded bg-gray-700 text-white border border-gray-500 overflow-hidden resize-none"
           />
+          {/* Conditionally show technologies textarea if this is a project */}
           {newEntry.isProject && (
             <textarea
               ref={techRef}
@@ -230,6 +261,8 @@ export default function ExperienceTable() {
             />
           )}
         </div>
+
+        {/* Submit button for adding or saving changes */}
         <button
           onClick={editId ? handleSaveEdit : handleAdd}
           className="mt-4 px-4 py-2 bg-green-600 text-white rounded"

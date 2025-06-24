@@ -3,7 +3,9 @@ import { PrismaClient } from '@prisma/client'
 
 const prisma = new PrismaClient()
 
+// Create or update an experience entry based on a unique combination of jobTitle, companyName, and startDate
 export async function POST(req) {
+
   const {
     jobTitle,
     companyName,
@@ -16,7 +18,9 @@ export async function POST(req) {
   } = await req.json()
 
   try {
+    // Use Prisma's `upsert` method to insert or update the experience entry
     const entry = await prisma.experience.upsert({
+      // Define unique composite key to look for an existing record
       where: {
         jobTitle_companyName_startDate: {
           jobTitle,
@@ -24,6 +28,7 @@ export async function POST(req) {
           startDate,
         },
       },
+      // Update if it exists
       update: {
         endDate,
         location,
@@ -31,6 +36,7 @@ export async function POST(req) {
         bullets,
         technologies,
       },
+      // Create new if it doesn't exist
       create: {
         jobTitle,
         companyName,
@@ -42,6 +48,8 @@ export async function POST(req) {
         technologies,
       },
     })
+
+    // Return the entry as JSON
     return NextResponse.json(entry)
   } catch (err) {
     console.error('Error saving experience:', err)
@@ -49,7 +57,9 @@ export async function POST(req) {
   }
 }
 
+// Update an existing experience entry by its ID
 export async function PUT(req) {
+  // Extract experience data and entry ID from the request 
   const {
     id,
     jobTitle,
@@ -63,6 +73,7 @@ export async function PUT(req) {
   } = await req.json()
 
   try {
+    // Update the experience entry 
     const updated = await prisma.experience.update({
       where: { id },
       data: {
@@ -76,6 +87,8 @@ export async function PUT(req) {
         technologies,
       },
     })
+
+    // Return the updated entry as JSON
     return NextResponse.json(updated)
   } catch (err) {
     console.error('Error updating experience:', err)
@@ -83,10 +96,13 @@ export async function PUT(req) {
   }
 }
 
+// Delete an experience entry by its ID
 export async function DELETE(req) {
+  // Extract the ID of the experience entry to delete
   const { id } = await req.json()
 
   try {
+    // Delete the entry with the given ID
     await prisma.experience.delete({ where: { id } })
     return NextResponse.json({ success: true })
   } catch (err) {

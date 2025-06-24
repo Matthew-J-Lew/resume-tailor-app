@@ -3,6 +3,7 @@
 import { useState } from 'react'
 
 export default function LatexCoverLetterPage() {
+  // State for user inputs and UI feedback
   const [latexCode, setLatexCode] = useState('')
   const [jobDescription, setJobDescription] = useState('')
   const [suggestions, setSuggestions] = useState('')
@@ -10,6 +11,7 @@ export default function LatexCoverLetterPage() {
   const [instructions, setInstructions] = useState('')
   const [copied, setCopied] = useState(false)
 
+  // Handle form submission to tailor the cover letter
   const handleSubmit = async (e) => {
     e.preventDefault()
     setLoading(true)
@@ -17,6 +19,7 @@ export default function LatexCoverLetterPage() {
     setCopied(false)
 
     try {
+      // Send user inputs to the backend API
       const response = await fetch('/api/cover-letter-tailor', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
@@ -24,6 +27,7 @@ export default function LatexCoverLetterPage() {
       })
 
       const data = await response.json()
+      // Display tailored suggestions from API response
       setSuggestions(data.output)
     } catch (error) {
       console.error('Error tailoring cover letter:', error)
@@ -33,10 +37,12 @@ export default function LatexCoverLetterPage() {
     }
   }
 
+  // Copy the suggestions text to clipboard
   const handleCopy = async () => {
     try {
       await navigator.clipboard.writeText(suggestions)
       setCopied(true)
+      // Reset copy status after 2 seconds
       setTimeout(() => setCopied(false), 2000)
     } catch (err) {
       console.error('Failed to copy:', err)
@@ -47,6 +53,7 @@ export default function LatexCoverLetterPage() {
     <div className="max-w-3xl mx-auto">
       <h1 className="text-2xl font-bold mb-4 text-blue-400">Tailor Your LaTeX Cover Letter</h1>
 
+      {/* Form to input LaTeX code, job description, and optional instructions */}
       <form onSubmit={handleSubmit} className="space-y-4">
         <div>
           <label className="block font-semibold mb-1">LaTeX Cover Letter Code</label>
@@ -83,6 +90,7 @@ export default function LatexCoverLetterPage() {
           />
         </div>
 
+        {/* Submit button disables while loading */}
         <button
           type="submit"
           disabled={loading}
@@ -92,6 +100,7 @@ export default function LatexCoverLetterPage() {
         </button>
       </form>
 
+      {/* Display suggestions and copy button when available */}
       {suggestions && (
         <div className="mt-6">
           <div className="flex items-center justify-between mb-2">

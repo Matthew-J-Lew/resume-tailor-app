@@ -3,8 +3,13 @@
 import { useEffect, useRef, useState } from 'react'
 
 export default function ProjectTable() {
+  // State to hold all project entries fetched from the backend
   const [entries, setEntries] = useState([])
+
+  // Loading indicator for fetch process
   const [loading, setLoading] = useState(true)
+
+  // State for the form inputs when adding or editing a project
   const [newEntry, setNewEntry] = useState({
     projectName: '',
     bullets: '',
@@ -13,15 +18,20 @@ export default function ProjectTable() {
     endDate: '',
     githubUrl: '',
   })
+
+  // Stores the id of the project being edited; null means adding new
   const [editId, setEditId] = useState(null)
 
+  // Refs for auto-resizing textareas
   const bulletsRef = useRef(null)
   const techRef = useRef(null)
 
+  // Fetch projects on component mount
   useEffect(() => {
     fetchEntries()
   }, [])
 
+  // Auto-resize bullets textarea when content changes
   useEffect(() => {
     if (bulletsRef.current) {
       bulletsRef.current.style.height = 'auto'
@@ -29,6 +39,7 @@ export default function ProjectTable() {
     }
   }, [newEntry.bullets])
 
+  // Auto-resize technologies textarea when content changes
   useEffect(() => {
     if (techRef.current) {
       techRef.current.style.height = 'auto'
@@ -36,6 +47,7 @@ export default function ProjectTable() {
     }
   }, [newEntry.technologies])
 
+  // Fetch project entries from backend API '/api/get-resume'
   const fetchEntries = async () => {
     try {
       const res = await fetch('/api/get-resume')
@@ -48,6 +60,7 @@ export default function ProjectTable() {
     }
   }
 
+  // Delete project entry by id, then refresh the list
   const handleDelete = async (id) => {
     await fetch('/api/projects', {
       method: 'DELETE',
@@ -57,6 +70,7 @@ export default function ProjectTable() {
     fetchEntries()
   }
 
+  // Populate form fields for editing a project entry
   const handleEdit = (entry) => {
     setEditId(entry.id)
     setNewEntry({
@@ -69,6 +83,7 @@ export default function ProjectTable() {
     })
   }
 
+  // Save changes to an existing project via PUT request
   const handleSaveEdit = async () => {
     const formatted = {
       id: editId,
@@ -91,6 +106,7 @@ export default function ProjectTable() {
     fetchEntries()
   }
 
+  // Add a new project entry via POST request
   const handleAdd = async () => {
     const formatted = {
       projectName: newEntry.projectName,
@@ -111,6 +127,7 @@ export default function ProjectTable() {
     fetchEntries()
   }
 
+  // Reset form fields to empty/default values
   const resetForm = () => {
     setNewEntry({
       projectName: '',
@@ -124,8 +141,10 @@ export default function ProjectTable() {
 
   return (
     <div className="p-6 bg-gray-800 text-white rounded-lg shadow-md mb-8">
+      {/* Section title */}
       <h2 className="text-xl font-semibold text-blue-300 mb-4">Projects</h2>
 
+      {/* Loading, empty state, or projects table */}
       {loading ? (
         <p>Loading...</p>
       ) : entries.length === 0 ? (
@@ -143,6 +162,7 @@ export default function ProjectTable() {
               </tr>
             </thead>
             <tbody>
+              {/* Render each project entry as a table row */}
               {entries.map((entry) => (
                 <tr key={entry.id} className="hover:bg-gray-700">
                   <td className="px-4 py-2 border-b border-gray-700">{entry.projectName}</td>
@@ -156,6 +176,7 @@ export default function ProjectTable() {
                     ) : '—'}
                   </td>
                   <td className="px-4 py-2 border-b border-gray-700 space-x-2">
+                    {/* Edit and Delete buttons */}
                     <button onClick={() => handleEdit(entry)} className="px-2 py-1 bg-yellow-600 text-white rounded text-xs">Edit</button>
                     <button onClick={() => handleDelete(entry.id)} className="px-2 py-1 bg-red-600 text-white rounded text-xs">Delete</button>
                   </td>
@@ -166,9 +187,11 @@ export default function ProjectTable() {
         </div>
       )}
 
+      {/* Form for adding or editing a project */}
       <div className="border-t border-gray-600 pt-4">
         <h3 className="text-lg mb-2">{editId ? 'Edit Project' : 'Add Project'}</h3>
         <div className="grid grid-cols-2 gap-4">
+          {/* Project name input */}
           <input
             type="text"
             value={newEntry.projectName}
@@ -176,6 +199,7 @@ export default function ProjectTable() {
             placeholder="Project Name"
             className="p-2 rounded bg-gray-700 text-white border border-gray-500 col-span-2"
           />
+          {/* Start date input */}
           <input
             type="text"
             value={newEntry.startDate}
@@ -183,6 +207,7 @@ export default function ProjectTable() {
             placeholder="Start Date"
             className="p-2 rounded bg-gray-700 text-white border border-gray-500"
           />
+          {/* End date input */}
           <input
             type="text"
             value={newEntry.endDate}
@@ -190,6 +215,7 @@ export default function ProjectTable() {
             placeholder="End Date"
             className="p-2 rounded bg-gray-700 text-white border border-gray-500"
           />
+          {/* GitHub URL input */}
           <input
             type="text"
             value={newEntry.githubUrl}
@@ -197,6 +223,7 @@ export default function ProjectTable() {
             placeholder="GitHub Repo URL (optional)"
             className="p-2 rounded bg-gray-700 text-white border border-gray-500 col-span-2"
           />
+          {/* Project description bullets textarea */}
           <textarea
             ref={bulletsRef}
             value={newEntry.bullets}
@@ -205,6 +232,7 @@ export default function ProjectTable() {
             className="col-span-2 p-2 rounded bg-gray-700 text-white border border-gray-500 overflow-hidden resize-none"
             rows={1}
           />
+          {/* Technologies used textarea */}
           <textarea
             ref={techRef}
             value={newEntry.technologies}
@@ -214,6 +242,8 @@ export default function ProjectTable() {
             rows={1}
           />
         </div>
+
+        {/* Submit button to add or save changes */}
         <button
           onClick={editId ? handleSaveEdit : handleAdd}
           className="mt-4 px-4 py-2 bg-green-600 text-white rounded"

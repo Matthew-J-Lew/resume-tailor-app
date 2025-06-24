@@ -3,8 +3,11 @@
 import { useEffect, useRef, useState } from 'react'
 
 export default function EducationTable() {
+  // State to hold education entries fetched from the database
   const [entries, setEntries] = useState([])
+  // Loading state to indicate fetching status
   const [loading, setLoading] = useState(true)
+  // State to hold form inputs for new or editing education entries
   const [newEntry, setNewEntry] = useState({
     schoolName: '',
     degree: '',
@@ -14,15 +17,19 @@ export default function EducationTable() {
     awards: '',
     relevantCourses: '',
   })
+  // ID of the entry currently being edited, or null if adding new
   const [editId, setEditId] = useState(null)
 
+  // Refs for textareas to auto resize as content changes
   const awardsRef = useRef(null)
   const coursesRef = useRef(null)
 
+  // Fetch education entries when component mounts
   useEffect(() => {
     fetchEntries()
   }, [])
 
+  // Auto-resize textarea height based on content
   const autoResizeTextarea = (ref) => {
     if (ref?.current) {
       ref.current.style.height = 'auto'
@@ -30,11 +37,13 @@ export default function EducationTable() {
     }
   }
 
+  // Auto-resize textareas when awards or courses text changes
   useEffect(() => {
     autoResizeTextarea(awardsRef)
     autoResizeTextarea(coursesRef)
   }, [newEntry.awards, newEntry.relevantCourses])
 
+  // Fetch education entries from API and update state
   const fetchEntries = async () => {
     try {
       const res = await fetch('/api/get-resume')
@@ -47,6 +56,7 @@ export default function EducationTable() {
     }
   }
 
+  // Delete an education entry by ID and refresh the list
   const handleDelete = async (id) => {
     await fetch('/api/education', {
       method: 'DELETE',
@@ -56,6 +66,7 @@ export default function EducationTable() {
     fetchEntries()
   }
 
+  // Populate form with existing entry data for editing
   const handleEdit = (entry) => {
     setEditId(entry.id)
     setNewEntry({
@@ -65,6 +76,7 @@ export default function EducationTable() {
     })
   }
 
+  // Save changes to an existing education entry via PUT request
   const handleSaveEdit = async () => {
     const formatted = {
       ...newEntry,
@@ -85,6 +97,7 @@ export default function EducationTable() {
     fetchEntries()
   }
 
+  // Add a new education entry via POST request
   const handleAdd = async () => {
     const formatted = {
       ...newEntry,
@@ -103,6 +116,7 @@ export default function EducationTable() {
     fetchEntries()
   }
 
+  // Reset form inputs to empty
   const resetForm = () => {
     setNewEntry({
       schoolName: '',
