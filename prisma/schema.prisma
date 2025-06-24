@@ -41,8 +41,10 @@ model Experience {
 }
 
 model Project {
-    id              Int     @id @default(autoincrement())
-    projectName     String  @unique
-    bullets         Json
-    technologies    Json
+  id            Int    @id @default(autoincrement())
+  projectName   String @unique
+  bullets       Json
+  technologies  Json
+  startDate     String? 
+  endDate       String? 
 }

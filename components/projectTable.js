@@ -1,6 +1,6 @@
 'use client'
 
-import { useEffect, useState } from 'react'
+import { useEffect, useRef, useState } from 'react'
 
 export default function ProjectTable() {
   const [entries, setEntries] = useState([])
@@ -9,12 +9,31 @@ export default function ProjectTable() {
     projectName: '',
     bullets: '',
     technologies: '',
+    startDate: '',
+    endDate: '',
   })
   const [editId, setEditId] = useState(null)
+
+  const bulletsRef = useRef(null)
+  const techRef = useRef(null)
 
   useEffect(() => {
     fetchEntries()
   }, [])
+
+  useEffect(() => {
+    if (bulletsRef.current) {
+      bulletsRef.current.style.height = 'auto'
+      bulletsRef.current.style.height = `${bulletsRef.current.scrollHeight}px`
+    }
+  }, [newEntry.bullets])
+
+  useEffect(() => {
+    if (techRef.current) {
+      techRef.current.style.height = 'auto'
+      techRef.current.style.height = `${techRef.current.scrollHeight}px`
+    }
+  }, [newEntry.technologies])
 
   const fetchEntries = async () => {
     try {
@@ -41,8 +60,10 @@ export default function ProjectTable() {
     setEditId(entry.id)
     setNewEntry({
       ...entry,
-      bullets: JSON.stringify(entry.bullets ?? []),
-      technologies: JSON.stringify(entry.technologies ?? []),
+      bullets: (entry.bullets ?? []).join('\n'),
+      technologies: (entry.technologies ?? []).join('\n'),
+      startDate: entry.startDate || '',
+      endDate: entry.endDate || '',
     })
   }
 
@@ -50,8 +71,10 @@ export default function ProjectTable() {
     const formatted = {
       id: editId,
       projectName: newEntry.projectName,
-      bullets: JSON.parse(newEntry.bullets || '[]'),
-      technologies: JSON.parse(newEntry.technologies || '[]'),
+      bullets: newEntry.bullets.split('\n').map(b => b.trim()).filter(Boolean),
+      technologies: newEntry.technologies.split('\n').map(t => t.trim()).filter(Boolean),
+      startDate: newEntry.startDate,
+      endDate: newEntry.endDate,
     }
 
     await fetch('/api/projects', {
@@ -68,8 +91,10 @@ export default function ProjectTable() {
   const handleAdd = async () => {
     const formatted = {
       projectName: newEntry.projectName,
-      bullets: JSON.parse(newEntry.bullets || '[]'),
-      technologies: JSON.parse(newEntry.technologies || '[]'),
+      bullets: newEntry.bullets.split('\n').map(b => b.trim()).filter(Boolean),
+      technologies: newEntry.technologies.split('\n').map(t => t.trim()).filter(Boolean),
+      startDate: newEntry.startDate,
+      endDate: newEntry.endDate,
     }
 
     await fetch('/api/projects', {
@@ -83,7 +108,13 @@ export default function ProjectTable() {
   }
 
   const resetForm = () => {
-    setNewEntry({ projectName: '', bullets: '', technologies: '' })
+    setNewEntry({
+      projectName: '',
+      bullets: '',
+      technologies: '',
+      startDate: '',
+      endDate: '',
+    })
   }
 
   return (
@@ -100,6 +131,8 @@ export default function ProjectTable() {
             <thead className="bg-gray-800 text-gray-300 sticky top-0">
               <tr>
                 <th className="px-4 py-2 border-b border-gray-600">Project</th>
+                <th className="px-4 py-2 border-b border-gray-600">Start</th>
+                <th className="px-4 py-2 border-b border-gray-600">End</th>
                 <th className="px-4 py-2 border-b border-gray-600">Actions</th>
               </tr>
             </thead>
@@ -107,6 +140,8 @@ export default function ProjectTable() {
               {entries.map((entry) => (
                 <tr key={entry.id} className="hover:bg-gray-700">
                   <td className="px-4 py-2 border-b border-gray-700">{entry.projectName}</td>
+                  <td className="px-4 py-2 border-b border-gray-700">{entry.startDate}</td>
+                  <td className="px-4 py-2 border-b border-gray-700">{entry.endDate}</td>
                   <td className="px-4 py-2 border-b border-gray-700 space-x-2">
                     <button onClick={() => handleEdit(entry)} className="px-2 py-1 bg-yellow-600 text-white rounded text-xs">Edit</button>
                     <button onClick={() => handleDelete(entry.id)} className="px-2 py-1 bg-red-600 text-white rounded text-xs">Delete</button>
@@ -128,17 +163,35 @@ export default function ProjectTable() {
             placeholder="Project Name"
             className="p-2 rounded bg-gray-700 text-white border border-gray-500 col-span-2"
           />
-          <textarea
-            value={newEntry.bullets}
-            onChange={(e) => setNewEntry({ ...newEntry, bullets: e.target.value })}
-            placeholder="Bullets (JSON format)"
-            className="col-span-2 p-2 rounded bg-gray-700 text-white border border-gray-500"
+          <input
+            type="text"
+            value={newEntry.startDate}
+            onChange={(e) => setNewEntry({ ...newEntry, startDate: e.target.value })}
+            placeholder="Start Date"
+            className="p-2 rounded bg-gray-700 text-white border border-gray-500"
+          />
+          <input
+            type="text"
+            value={newEntry.endDate}
+            onChange={(e) => setNewEntry({ ...newEntry, endDate: e.target.value })}
+            placeholder="End Date"
+            className="p-2 rounded bg-gray-700 text-white border border-gray-500"
           />
           <textarea
+            ref={bulletsRef}
+            value={newEntry.bullets}
+            onChange={(e) => setNewEntry({ ...newEntry, bullets: e.target.value })}
+            placeholder="Project Description (One entry per line)"
+            className="col-span-2 p-2 rounded bg-gray-700 text-white border border-gray-500 overflow-hidden resize-none"
+            rows={1}
+          />
+          <textarea
+            ref={techRef}
             value={newEntry.technologies}
             onChange={(e) => setNewEntry({ ...newEntry, technologies: e.target.value })}
-            placeholder="Technologies (JSON format)"
-            className="col-span-2 p-2 rounded bg-gray-700 text-white border border-gray-500"
+            placeholder="Technologies Used (One entry per line)"
+            className="col-span-2 p-2 rounded bg-gray-700 text-white border border-gray-500 overflow-hidden resize-none"
+            rows={1}
           />
         </div>
         <button

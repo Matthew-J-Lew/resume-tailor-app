@@ -8,6 +8,15 @@ export default function SkillTable() {
   const [newSkill, setNewSkill] = useState({ name: '', type: '' })
   const [editIndex, setEditIndex] = useState(null)
 
+  const typeOrder = {
+    'Programming Languages': 1,
+    'Web Development': 2,
+    'Database': 3,
+    'Tools':4,
+    'Other': 5,
+    'Soft Skills': 6,
+  }
+
   useEffect(() => {
     fetchSkills()
   }, [])
@@ -75,26 +84,33 @@ export default function SkillTable() {
               </tr>
             </thead>
             <tbody>
-              {skills.map((skill, i) => (
-                <tr key={skill.name} className="hover:bg-gray-700">
-                  <td className="px-4 py-2 border-b border-gray-700">{skill.name}</td>
-                  <td className="px-4 py-2 border-b border-gray-700">{skill.type || 'N/A'}</td>
-                  <td className="px-4 py-2 border-b border-gray-700 space-x-2">
-                    <button
-                      onClick={() => handleEdit(i)}
-                      className="px-2 py-1 bg-yellow-600 text-white rounded text-xs"
-                    >
-                      Edit
-                    </button>
-                    <button
-                      onClick={() => handleDelete(skill.name)}
-                      className="px-2 py-1 bg-red-600 text-white rounded text-xs"
-                    >
-                      Delete
-                    </button>
-                  </td>
-                </tr>
-              ))}
+              {[...skills]
+                .sort((a, b) => {
+                  const typeA = typeOrder[a.type] || 99
+                  const typeB = typeOrder[b.type] || 99
+                  if (typeA !== typeB) return typeA - typeB
+                  return a.name.localeCompare(b.name)
+                })
+                .map((skill, i) => (
+                  <tr key={skill.name} className="hover:bg-gray-700">
+                    <td className="px-4 py-2 border-b border-gray-700">{skill.name}</td>
+                    <td className="px-4 py-2 border-b border-gray-700">{skill.type || 'N/A'}</td>
+                    <td className="px-4 py-2 border-b border-gray-700 space-x-2">
+                      <button
+                        onClick={() => handleEdit(i)}
+                        className="px-2 py-1 bg-yellow-600 text-white rounded text-xs"
+                      >
+                        Edit
+                      </button>
+                      <button
+                        onClick={() => handleDelete(skill.name)}
+                        className="px-2 py-1 bg-red-600 text-white rounded text-xs"
+                      >
+                        Delete
+                      </button>
+                    </td>
+                  </tr>
+                ))}
             </tbody>
           </table>
         </div>
@@ -109,14 +125,14 @@ export default function SkillTable() {
             type="text"
             value={newSkill.name}
             onChange={(e) => setNewSkill({ ...newSkill, name: e.target.value })}
-            placeholder="Skill name"
+            placeholder="Skill Name"
             className="w-full p-2 rounded bg-gray-700 text-white border border-gray-500"
           />
           <input
             type="text"
             value={newSkill.type}
             onChange={(e) => setNewSkill({ ...newSkill, type: e.target.value })}
-            placeholder="Skill type"
+            placeholder="Skill Type"
             className="w-full p-2 rounded bg-gray-700 text-white border border-gray-500"
           />
           <button

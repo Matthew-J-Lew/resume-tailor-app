@@ -1,6 +1,6 @@
 'use client'
 
-import { useEffect, useState } from 'react'
+import { useEffect, useState, useRef } from 'react'
 
 export default function ExperienceTable() {
   const [entries, setEntries] = useState([])
@@ -17,9 +17,26 @@ export default function ExperienceTable() {
   })
   const [editId, setEditId] = useState(null)
 
+  const bulletsRef = useRef(null)
+  const techRef = useRef(null)
+
   useEffect(() => {
     fetchEntries()
   }, [])
+
+  useEffect(() => {
+    if (bulletsRef.current) {
+      bulletsRef.current.style.height = 'auto'
+      bulletsRef.current.style.height = `${bulletsRef.current.scrollHeight}px`
+    }
+  }, [newEntry.bullets])
+
+  useEffect(() => {
+    if (techRef.current) {
+      techRef.current.style.height = 'auto'
+      techRef.current.style.height = `${techRef.current.scrollHeight}px`
+    }
+  }, [newEntry.technologies])
 
   const fetchEntries = async () => {
     try {
@@ -45,9 +62,14 @@ export default function ExperienceTable() {
   const handleEdit = (entry) => {
     setEditId(entry.id)
     setNewEntry({
-      ...entry,
-      bullets: JSON.stringify(entry.bullets ?? []),
-      technologies: JSON.stringify(entry.technologies ?? []),
+      jobTitle: entry.jobTitle || '',
+      companyName: entry.companyName || '',
+      startDate: entry.startDate || '',
+      endDate: entry.endDate || '',
+      location: entry.location || '',
+      isProject: entry.isProject || false,
+      bullets: (entry.bullets || []).join('\n'),
+      technologies: (entry.technologies || []).join('\n'),
     })
   }
 
@@ -56,8 +78,10 @@ export default function ExperienceTable() {
       ...newEntry,
       id: editId,
       isProject: Boolean(newEntry.isProject),
-      bullets: JSON.parse(newEntry.bullets || '[]'),
-      technologies: newEntry.technologies ? JSON.parse(newEntry.technologies) : undefined,
+      bullets: newEntry.bullets.split('\n').map((b) => b.trim()).filter(Boolean),
+      technologies: newEntry.isProject
+        ? newEntry.technologies.split('\n').map((t) => t.trim()).filter(Boolean)
+        : undefined,
     }
 
     await fetch('/api/experience', {
@@ -75,8 +99,10 @@ export default function ExperienceTable() {
     const formatted = {
       ...newEntry,
       isProject: Boolean(newEntry.isProject),
-      bullets: JSON.parse(newEntry.bullets || '[]'),
-      technologies: newEntry.technologies ? JSON.parse(newEntry.technologies) : undefined,
+      bullets: newEntry.bullets.split('\n').map((b) => b.trim()).filter(Boolean),
+      technologies: newEntry.isProject
+        ? newEntry.technologies.split('\n').map((t) => t.trim()).filter(Boolean)
+        : undefined,
     }
 
     await fetch('/api/experience', {
@@ -143,16 +169,41 @@ export default function ExperienceTable() {
       <div className="border-t border-gray-600 pt-4">
         <h3 className="text-lg mb-2">{editId ? 'Edit Entry' : 'Add Entry'}</h3>
         <div className="grid grid-cols-2 gap-4">
-          {['jobTitle', 'companyName', 'startDate', 'endDate', 'location'].map((field) => (
-            <input
-              key={field}
-              type="text"
-              value={newEntry[field]}
-              onChange={(e) => setNewEntry({ ...newEntry, [field]: e.target.value })}
-              placeholder={field.charAt(0).toUpperCase() + field.slice(1)}
-              className="p-2 rounded bg-gray-700 text-white border border-gray-500"
-            />
-          ))}
+          <input
+            type="text"
+            value={newEntry.jobTitle}
+            onChange={(e) => setNewEntry({ ...newEntry, jobTitle: e.target.value })}
+            placeholder="Job Title"
+            className="p-2 rounded bg-gray-700 text-white border border-gray-500"
+          />
+          <input
+            type="text"
+            value={newEntry.companyName}
+            onChange={(e) => setNewEntry({ ...newEntry, companyName: e.target.value })}
+            placeholder="Company"
+            className="p-2 rounded bg-gray-700 text-white border border-gray-500"
+          />
+          <input
+            type="text"
+            value={newEntry.startDate}
+            onChange={(e) => setNewEntry({ ...newEntry, startDate: e.target.value })}
+            placeholder="Start Date"
+            className="p-2 rounded bg-gray-700 text-white border border-gray-500"
+          />
+          <input
+            type="text"
+            value={newEntry.endDate}
+            onChange={(e) => setNewEntry({ ...newEntry, endDate: e.target.value })}
+            placeholder="End Date"
+            className="p-2 rounded bg-gray-700 text-white border border-gray-500"
+          />
+          <input
+            type="text"
+            value={newEntry.location}
+            onChange={(e) => setNewEntry({ ...newEntry, location: e.target.value })}
+            placeholder="Location"
+            className="p-2 rounded bg-gray-700 text-white border border-gray-500"
+          />
           <label className="flex items-center text-sm col-span-2">
             <input
               type="checkbox"
@@ -163,17 +214,19 @@ export default function ExperienceTable() {
             Is Project?
           </label>
           <textarea
+            ref={bulletsRef}
             value={newEntry.bullets}
             onChange={(e) => setNewEntry({ ...newEntry, bullets: e.target.value })}
-            placeholder='Bullets (JSON format)'
-            className="col-span-2 p-2 rounded bg-gray-700 text-white border border-gray-500"
+            placeholder="Job Description (One entry per line)"
+            className="col-span-2 p-2 rounded bg-gray-700 text-white border border-gray-500 overflow-hidden resize-none"
           />
           {newEntry.isProject && (
             <textarea
+              ref={techRef}
               value={newEntry.technologies}
               onChange={(e) => setNewEntry({ ...newEntry, technologies: e.target.value })}
-              placeholder='Technologies (JSON format)'
-              className="col-span-2 p-2 rounded bg-gray-700 text-white border border-gray-500"
+              placeholder="Technologies (One per line)"
+              className="col-span-2 p-2 rounded bg-gray-700 text-white border border-gray-500 overflow-hidden resize-none"
             />
           )}
         </div>

@@ -1,6 +1,6 @@
 'use client'
 
-import { useEffect, useState } from 'react'
+import { useEffect, useRef, useState } from 'react'
 
 export default function EducationTable() {
   const [entries, setEntries] = useState([])
@@ -16,9 +16,24 @@ export default function EducationTable() {
   })
   const [editId, setEditId] = useState(null)
 
+  const awardsRef = useRef(null)
+  const coursesRef = useRef(null)
+
   useEffect(() => {
     fetchEntries()
   }, [])
+
+  const autoResizeTextarea = (ref) => {
+    if (ref?.current) {
+      ref.current.style.height = 'auto'
+      ref.current.style.height = `${ref.current.scrollHeight}px`
+    }
+  }
+
+  useEffect(() => {
+    autoResizeTextarea(awardsRef)
+    autoResizeTextarea(coursesRef)
+  }, [newEntry.awards, newEntry.relevantCourses])
 
   const fetchEntries = async () => {
     try {
@@ -45,8 +60,8 @@ export default function EducationTable() {
     setEditId(entry.id)
     setNewEntry({
       ...entry,
-      awards: JSON.stringify(entry.awards ?? []),
-      relevantCourses: JSON.stringify(entry.relevantCourses ?? []),
+      awards: (entry.awards ?? []).join('\n'),
+      relevantCourses: (entry.relevantCourses ?? []).join('\n'),
     })
   }
 
@@ -55,8 +70,8 @@ export default function EducationTable() {
       ...newEntry,
       id: editId,
       gpa: parseFloat(newEntry.gpa),
-      awards: JSON.parse(newEntry.awards || '[]'),
-      relevantCourses: JSON.parse(newEntry.relevantCourses || '[]'),
+      awards: newEntry.awards.split('\n').map(s => s.trim()).filter(Boolean),
+      relevantCourses: newEntry.relevantCourses.split('\n').map(s => s.trim()).filter(Boolean),
     }
 
     await fetch('/api/education', {
@@ -66,15 +81,7 @@ export default function EducationTable() {
     })
 
     setEditId(null)
-    setNewEntry({
-      schoolName: '',
-      degree: '',
-      gpa: '',
-      startDate: '',
-      endDate: '',
-      awards: '',
-      relevantCourses: '',
-    })
+    resetForm()
     fetchEntries()
   }
 
@@ -82,8 +89,8 @@ export default function EducationTable() {
     const formatted = {
       ...newEntry,
       gpa: parseFloat(newEntry.gpa),
-      awards: JSON.parse(newEntry.awards || '[]'),
-      relevantCourses: JSON.parse(newEntry.relevantCourses || '[]'),
+      awards: newEntry.awards.split('\n').map(s => s.trim()).filter(Boolean),
+      relevantCourses: newEntry.relevantCourses.split('\n').map(s => s.trim()).filter(Boolean),
     }
 
     await fetch('/api/education', {
@@ -92,6 +99,11 @@ export default function EducationTable() {
       body: JSON.stringify(formatted),
     })
 
+    resetForm()
+    fetchEntries()
+  }
+
+  const resetForm = () => {
     setNewEntry({
       schoolName: '',
       degree: '',
@@ -101,7 +113,6 @@ export default function EducationTable() {
       awards: '',
       relevantCourses: '',
     })
-    fetchEntries()
   }
 
   return (
@@ -147,27 +158,62 @@ export default function EducationTable() {
       <div className="border-t border-gray-600 pt-4">
         <h3 className="text-lg mb-2">{editId ? 'Edit Entry' : 'Add Entry'}</h3>
         <div className="grid grid-cols-2 gap-4">
-          {['schoolName', 'degree', 'gpa', 'startDate', 'endDate'].map((field) => (
-            <input
-              key={field}
-              type="text"
-              value={newEntry[field]}
-              onChange={(e) => setNewEntry({ ...newEntry, [field]: e.target.value })}
-              placeholder={field.charAt(0).toUpperCase() + field.slice(1)}
-              className="p-2 rounded bg-gray-700 text-white border border-gray-500"
-            />
-          ))}
-          <textarea
-            value={newEntry.awards}
-            onChange={(e) => setNewEntry({ ...newEntry, awards: e.target.value })}
-            placeholder='Awards (JSON format)'
-            className="col-span-2 p-2 rounded bg-gray-700 text-white border border-gray-500"
+          <input
+            type="text"
+            value={newEntry.schoolName}
+            onChange={(e) => setNewEntry({ ...newEntry, schoolName: e.target.value })}
+            placeholder="School Name"
+            className="p-2 rounded bg-gray-700 text-white border border-gray-500"
+          />
+          <input
+            type="text"
+            value={newEntry.degree}
+            onChange={(e) => setNewEntry({ ...newEntry, degree: e.target.value })}
+            placeholder="Degree"
+            className="p-2 rounded bg-gray-700 text-white border border-gray-500"
+          />
+          <input
+            type="text"
+            value={newEntry.gpa}
+            onChange={(e) => setNewEntry({ ...newEntry, gpa: e.target.value })}
+            placeholder="GPA"
+            className="p-2 rounded bg-gray-700 text-white border border-gray-500"
+          />
+          <input
+            type="text"
+            value={newEntry.startDate}
+            onChange={(e) => setNewEntry({ ...newEntry, startDate: e.target.value })}
+            placeholder="Start Date"
+            className="p-2 rounded bg-gray-700 text-white border border-gray-500"
+          />
+          <input
+            type="text"
+            value={newEntry.endDate}
+            onChange={(e) => setNewEntry({ ...newEntry, endDate: e.target.value })}
+            placeholder="End Date"
+            className="p-2 rounded bg-gray-700 text-white border border-gray-500"
           />
           <textarea
+            ref={awardsRef}
+            value={newEntry.awards}
+            onChange={(e) => {
+              setNewEntry({ ...newEntry, awards: e.target.value })
+              autoResizeTextarea(awardsRef)
+            }}
+            placeholder="Awards (One entry per line)"
+            className="col-span-2 p-2 rounded bg-gray-700 text-white border border-gray-500 overflow-hidden resize-none"
+            rows={1}
+          />
+          <textarea
+            ref={coursesRef}
             value={newEntry.relevantCourses}
-            onChange={(e) => setNewEntry({ ...newEntry, relevantCourses: e.target.value })}
-            placeholder='Relevant Courses (JSON format)'
-            className="col-span-2 p-2 rounded bg-gray-700 text-white border border-gray-500"
+            onChange={(e) => {
+              setNewEntry({ ...newEntry, relevantCourses: e.target.value })
+              autoResizeTextarea(coursesRef)
+            }}
+            placeholder="Relevant Coursework (One entry per line)"
+            className="col-span-2 p-2 rounded bg-gray-700 text-white border border-gray-500 overflow-hidden resize-none"
+            rows={1}
           />
         </div>
         <button

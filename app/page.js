@@ -1,0 +1,36 @@
+'use client'
+
+import Link from 'next/link'
+
+export default function HomePage() {
+  return (
+    <div className="flex items-center justify-center min-h-screen px-4 -mt-16">
+      <div className="text-center max-w-2xl">
+        <h1 className="text-4xl font-bold mb-4 text-blue-400">
+          Welcome to Your Personalized Resume Tailor!
+        </h1>
+        <p className="text-lg text-gray-300 mb-8">
+          Upload your resume, store your skills, and get clean finished LaTeX resumes!
+        </p>
+
+        <div className="flex flex-col sm:flex-row justify-center gap-4">
+          <Link href="/upload-resume">
+            <button className="bg-blue-600 hover:bg-blue-700 text-white px-6 py-3 rounded shadow">
+              Upload Resume
+            </button>
+          </Link>
+          <Link href="/resume-dashboard">
+            <button className="bg-purple-600 hover:bg-purple-700 text-white px-6 py-3 rounded shadow">
+              Dashboard
+            </button>
+          </Link>
+          <Link href="/latex-tailor">
+            <button className="bg-green-600 hover:bg-green-700 text-white px-6 py-3 rounded shadow">
+              LaTeX Tailor
+            </button>
+          </Link>
+        </div>
+      </div>
+    </div>
+  )
+}

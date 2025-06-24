@@ -7,14 +7,12 @@ import ProjectTable from '@/components/projectTable'
 
 export default function ResumeDashboard() {
   return (
-    <div className="p-8 bg-gray-900 min-h-screen text-white">
+    <div className="max-w-5xl mx-auto">
       <h1 className="text-3xl font-bold mb-6 text-blue-400">Resume Dashboard</h1>
-
       <SkillTable />
       <EducationTable />
       <ExperienceTable />
       <ProjectTable />
-      
     </div>
   )
 }
