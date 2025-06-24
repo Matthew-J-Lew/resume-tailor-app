@@ -4,13 +4,13 @@ import { PrismaClient } from '@prisma/client'
 const prisma = new PrismaClient()
 
 export async function POST(req) {
-  const { projectName, bullets, technologies, startDate, endDate } = await req.json()
+  const { projectName, bullets, technologies, startDate, endDate, githubUrl } = await req.json()
 
   try {
     const entry = await prisma.project.upsert({
       where: { projectName },
-      update: { bullets, technologies, startDate, endDate },
-      create: { projectName, bullets, technologies, startDate, endDate },
+      update: { bullets, technologies, startDate, endDate, githubUrl },
+      create: { projectName, bullets, technologies, startDate, endDate, githubUrl },
     })
     return NextResponse.json(entry)
   } catch (err) {
@@ -20,12 +20,12 @@ export async function POST(req) {
 }
 
 export async function PUT(req) {
-  const { id, projectName, bullets, technologies, startDate, endDate } = await req.json()
+  const { id, projectName, bullets, technologies, startDate, endDate, githubUrl } = await req.json()
 
   try {
     const updated = await prisma.project.update({
       where: { id },
-      data: { projectName, bullets, technologies, startDate, endDate },
+      data: { projectName, bullets, technologies, startDate, endDate, githubUrl },
     })
     return NextResponse.json(updated)
   } catch (err) {

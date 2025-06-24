@@ -47,6 +47,9 @@ projects:
 - projectName
 - bullets (list of strings)
 - technologies (list of strings)
+- startDate
+- endDate
+- githubUrl
 
 Resume:
 ${resumeText}

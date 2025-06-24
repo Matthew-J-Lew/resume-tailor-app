@@ -47,4 +47,5 @@ model Project {
   technologies  Json
   startDate     String? 
   endDate       String? 
+  githubUrl     String?
 }

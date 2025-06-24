@@ -11,6 +11,7 @@ export default function ProjectTable() {
     technologies: '',
     startDate: '',
     endDate: '',
+    githubUrl: '',
   })
   const [editId, setEditId] = useState(null)
 
@@ -64,6 +65,7 @@ export default function ProjectTable() {
       technologies: (entry.technologies ?? []).join('\n'),
       startDate: entry.startDate || '',
       endDate: entry.endDate || '',
+      githubUrl: entry.githubUrl || '',
     })
   }
 
@@ -75,6 +77,7 @@ export default function ProjectTable() {
       technologies: newEntry.technologies.split('\n').map(t => t.trim()).filter(Boolean),
       startDate: newEntry.startDate,
       endDate: newEntry.endDate,
+      githubUrl: newEntry.githubUrl,
     }
 
     await fetch('/api/projects', {
@@ -95,6 +98,7 @@ export default function ProjectTable() {
       technologies: newEntry.technologies.split('\n').map(t => t.trim()).filter(Boolean),
       startDate: newEntry.startDate,
       endDate: newEntry.endDate,
+      githubUrl: newEntry.githubUrl,
     }
 
     await fetch('/api/projects', {
@@ -114,6 +118,7 @@ export default function ProjectTable() {
       technologies: '',
       startDate: '',
       endDate: '',
+      githubUrl: '',
     })
   }
 
@@ -133,6 +138,7 @@ export default function ProjectTable() {
                 <th className="px-4 py-2 border-b border-gray-600">Project</th>
                 <th className="px-4 py-2 border-b border-gray-600">Start</th>
                 <th className="px-4 py-2 border-b border-gray-600">End</th>
+                <th className="px-4 py-2 border-b border-gray-600">GitHub</th>
                 <th className="px-4 py-2 border-b border-gray-600">Actions</th>
               </tr>
             </thead>
@@ -142,6 +148,13 @@ export default function ProjectTable() {
                   <td className="px-4 py-2 border-b border-gray-700">{entry.projectName}</td>
                   <td className="px-4 py-2 border-b border-gray-700">{entry.startDate}</td>
                   <td className="px-4 py-2 border-b border-gray-700">{entry.endDate}</td>
+                  <td className="px-4 py-2 border-b border-gray-700">
+                    {entry.githubUrl ? (
+                      <a href={entry.githubUrl} target="_blank" rel="noopener noreferrer" className="text-blue-400 underline">
+                        Link
+                      </a>
+                    ) : '—'}
+                  </td>
                   <td className="px-4 py-2 border-b border-gray-700 space-x-2">
                     <button onClick={() => handleEdit(entry)} className="px-2 py-1 bg-yellow-600 text-white rounded text-xs">Edit</button>
                     <button onClick={() => handleDelete(entry.id)} className="px-2 py-1 bg-red-600 text-white rounded text-xs">Delete</button>
@@ -176,6 +189,13 @@ export default function ProjectTable() {
             onChange={(e) => setNewEntry({ ...newEntry, endDate: e.target.value })}
             placeholder="End Date"
             className="p-2 rounded bg-gray-700 text-white border border-gray-500"
+          />
+          <input
+            type="text"
+            value={newEntry.githubUrl}
+            onChange={(e) => setNewEntry({ ...newEntry, githubUrl: e.target.value })}
+            placeholder="GitHub Repo URL (optional)"
+            className="p-2 rounded bg-gray-700 text-white border border-gray-500 col-span-2"
           />
           <textarea
             ref={bulletsRef}
