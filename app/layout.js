@@ -23,9 +23,10 @@ export default function RootLayout({ children }) {
       <body className="bg-gray-900 text-white min-h-screen font-sans">
         <nav className="w-full bg-gray-800 text-white px-8 py-4 flex space-x-6 shadow-sm">
           <Link href="/" className="hover:text-blue-400 font-medium">Home</Link>
-          <Link href="/upload-resume" className="hover:text-blue-400 font-medium">Upload Resume</Link>
-          <Link href="/latex-tailor" className="hover:text-blue-400 font-medium">LaTeX Tailor</Link>
           <Link href="/resume-dashboard" className="hover:text-blue-400 font-medium">Dashboard</Link>
+          <Link href="/latex-tailor" className="hover:text-blue-400 font-medium">Resume Generator</Link>
+          <Link href="/cover-letter-tailor" className="hover:text-blue-400 font-medium">Cover Letter Generator</Link>
+          <Link href="/upload-resume" className="hover:text-blue-400 font-medium">Resume Parser</Link>
         </nav>
 
         <main className="px-8 py-6">

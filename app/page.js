@@ -14,19 +14,24 @@ export default function HomePage() {
         </p>
 
         <div className="flex flex-col sm:flex-row justify-center gap-4">
-          <Link href="/upload-resume">
-            <button className="bg-blue-600 hover:bg-blue-700 text-white px-6 py-3 rounded shadow">
-              Upload Resume
-            </button>
-          </Link>
           <Link href="/resume-dashboard">
-            <button className="bg-purple-600 hover:bg-purple-700 text-white px-6 py-3 rounded shadow">
+            <button className="bg-purple-600 hover:bg-purple-700 text-white px-6 py-3 rounded shadow whitespace-nowrap">
               Dashboard
             </button>
           </Link>
           <Link href="/latex-tailor">
-            <button className="bg-green-600 hover:bg-green-700 text-white px-6 py-3 rounded shadow">
-              LaTeX Tailor
+            <button className="bg-green-600 hover:bg-green-700 text-white px-6 py-3 rounded shadow whitespace-nowrap">
+              Resume Generator
+            </button>
+          </Link>
+          <Link href="/cover-letter-tailor">
+            <button className="bg-green-600 hover:bg-green-700 text-white px-6 py-3 rounded shadow whitespace-nowrap">
+              Cover Letter Generator
+            </button>
+          </Link>
+          <Link href="/upload-resume">
+            <button className="bg-blue-600 hover:bg-blue-700 text-white px-6 py-3 rounded shadow whitespace-nowrap">
+              Resume Parser
             </button>
           </Link>
         </div>
