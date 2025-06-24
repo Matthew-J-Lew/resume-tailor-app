@@ -1,36 +1,86 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://github.com/vercel/next.js/tree/canary/packages/create-next-app).
+# 📄 Resume Tailor
 
-## Getting Started
 
-First, run the development server:
+An AI-powered resume and LaTeX tailoring web application!
+
+Upload your resume (PDF or LaTeX), parse it into structured data (skills, experience, education, projects), store it locally with SQLite, and get tailored suggestions and edits for the job description using the OpenAI API.
+
+The goal is for the application to store all your skills and experiences as a 'Master List' and using AI it can create the best version of your resume for a given job posting!
+
+---
+
+## ✨ Features
+
+- 📤 Upload and parse resumes for your 'Master List' (PDF or LaTeX)
+- 🧠 Tailor LaTeX resumes or cover letters to job descriptions using OpenAI
+- 📊 Manage resume data via a dashboard (skills, experience, education, projects)
+- ⚙️ Store resume data locally using SQLite and Prisma
+- 💡 Intelligent suggestions based on job postings
+
+---
+## 🛠️ Tech Stack
+
+- [Next.js](https://nextjs.org/) — App framework
+- [Tailwind CSS](https://tailwindcss.com/) — Styling
+- [Prisma](https://www.prisma.io/) + SQLite — Database
+- [OpenAI API](https://platform.openai.com/docs) — AI tailoring
+
+---
+## 🚀 Getting Started
+
+### 1. Clone the Repository
 
 ```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
+git clone https://github.com/Matthew-J-Lew/resume-tailor-app
+cd resume-tailor
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+### 2. Install Dependencies
+```bash
+npm install
+```
 
-You can start editing the page by modifying `app/page.js`. The page auto-updates as you edit the file.
+### 3. Set Up Environment Variables
+Create a .env file in the root and add your OpenAI API key and the following file path for the DATABASE_URL:
+```env
+OPENAI_API_KEY=your_openai_api_key_here
+DATABASE_URL="file:./prisma/dev.db"
+```
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+### 4. Set Up the Database
+Initialize SQLite and Prisma:
+```bash
+npx prisma generate
+npx prisma migrate dev --name init
+```
+This creates your local SQLite database (.prisma/dev.db) and applies the schema/
+If you want to inspect the DB:
+```bash
+npx prisma studio
+```
+### 5. Run the App!
+```bash
+npm run dev
+```
+Visit http://localhost:3000 and you'll be brought to the landing page!
+---
+## 💡 Planned Features
 
-## Learn More
+- Better cover letter tailoring (better writing style preservation/formatting)
+- Exporting LaTeX resumes and cover letters to PDF
+- Multiple saved resume versions
+- Supabase/Postgres backend integration and Vercel deployment
 
-To learn more about Next.js, take a look at the following resources:
+---
+## 🪪 License
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+MIT License © [Matthew Lew](https://github.com/Matthew-J-Lew)
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+[![GitHub](https://img.shields.io/badge/GitHub-181717?style=flat&logo=github&logoColor=white)](https://github.com/Matthew-J-Lew)
+[![LinkedIn](https://img.shields.io/badge/LinkedIn-0A66C2?style=flat&logo=linkedin&logoColor=white)](https://www.linkedin.com/in/matt-j-lew/)
 
-## Deploy on Vercel
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+
+
+
