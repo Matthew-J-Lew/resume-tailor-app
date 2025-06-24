@@ -17,7 +17,7 @@ export default function LatexCoverLetterPage() {
     setCopied(false)
 
     try {
-      const response = await fetch('/api/tailor-cover-letter', {
+      const response = await fetch('/api/cover-letter-tailor', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ latexCode, jobDescription, instructions }),
