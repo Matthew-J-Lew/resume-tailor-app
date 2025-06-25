@@ -18,6 +18,37 @@ The goal is for the application to store all your skills and experiences as a 'M
 - 💡 Intelligent suggestions based on job postings
 
 ---
+## 📸 Screenshots
+
+### 🏠 Landing Page  
+![Landing Page](./public/screenshots/homepage.png)
+
+### 🖥 Resume Upload
+Upload your resume PDF or LaTeX code and your skills will be inserted into your database!
+![Resume_Upload](./public/screenshots/upload_resume.png)
+
+### 📊 Resume Dashboard  
+Manage your master list of skills, education, experience, and projects.  
+![Dashboard](./public/screenshots/dashboard.png)
+
+### 🧠 LaTeX Resume Tailoring  
+Get AI-generated suggestions based on job descriptions.  
+![Resume Tailor](./public/screenshots/resume_tailor.png)
+
+### ✍️ Cover Letter Tailoring  
+Tailor your existing cover letter to match job requirements.  
+![Cover Letter Tailor](./public/screenshots/cover_letter_tailor.png)
+
+### 📄 Sample Output: Resume & Cover Letter
+
+<div align="center">
+  <img src="./public/screenshots/sample_resume.png" alt="Sample Resume" width="400" style="margin-right: 10px;" />
+  <img src="./public/screenshots/sample_cover_letter.png" alt="Sample Cover Letter" width="400" />
+</div>
+
+
+
+---
 ## 🛠️ Tech Stack
 
 - [Next.js](https://nextjs.org/) — App framework
