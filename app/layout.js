@@ -19,7 +19,7 @@ export const metadata = {
 
 export default function RootLayout({ children }) {
   return (
-    <html lang="en" className={`${geistSans.variable} ${geistMono.variable}`}>
+    <html lang="en" className={`dark ${geistSans.variable} ${geistMono.variable}`}>
       <body className="bg-gray-900 text-white min-h-screen font-sans">
         <nav className="w-full bg-gray-800 text-white px-8 py-4 flex space-x-6 shadow-sm">
           <Link href="/" className="hover:text-blue-400 font-medium">Home</Link>
