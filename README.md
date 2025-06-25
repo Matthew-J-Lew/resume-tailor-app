@@ -99,6 +99,7 @@ Visit http://localhost:3000 and you'll be brought to the landing page!
 ---
 ## 💡 Planned Features
 
+- User can store and save special tailoring instructions in database
 - Better cover letter tailoring (better writing style preservation/formatting)
 - Exporting LaTeX resumes and cover letters to PDF
 - Multiple saved resume versions
