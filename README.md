@@ -67,6 +67,7 @@ cd resume-tailor
 ```
 
 ### 2. Install Dependencies
+**Note:** You’ll need **[Node.js](https://nodejs.org/)** installed (version 18 or higher recommended).
 ```bash
 npm install
 ```
@@ -77,6 +78,7 @@ Create a .env file in the root and add your OpenAI API key and the following fil
 OPENAI_API_KEY=your_openai_api_key_here
 DATABASE_URL="file:./prisma/dev.db"
 ```
+You can get your OpenAI API key by creating an account at **[platform.openai.com](https://platform.openai.com/account/api-keys)** and generating a key under your account settings.
 
 ### 4. Set Up the Database
 Initialize SQLite and Prisma:
